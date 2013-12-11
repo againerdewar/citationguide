@@ -9,7 +9,219 @@
 \newcommand*{\filename}[1]{\texttt{#1}}
 \newcommand*{\inst}[1]{\textbf{\boldmath{}#1}}
 
+% Load in biblatex
+% To use a different bibliography style, just change "numeric" to
+% your preferred style (mla for MLA style, alphabetic for Author-Year
+% style, etc.) There are a lot of options; check the BibLaTeX documentation.
+\usepackage[backend=bibtex,style=numeric]{biblatex}
+% Select the bibliography file
+\addbibresource{sources.bib}
+
 \begin{document}
 \maketitle
 
+\LaTeX{} provides powerful facilities for handling bibliographic citations in your documents through the Bib\TeX{} and Bib\LaTeX{} packages.
+Like many other \LaTeX{} features, these will allow you to spend less time worrying about formatting and more time producing content.
+
+Let's get started!
+
+\section{What's Bib\LaTeX{}?}
+\label{s:whatis}
+Bib\LaTeX{} is a \enquote{citation management system}.
+It allows you to handle citations automatically, the same way \LaTeX{} lets you handle internal references automatically with \code{\textbackslash{}label\{\}} and \code{\textbackslash{}cite\{\}}.
+For example, in this document, I can cite the Bib\LaTeX{} documentation simply by typing \code{\textbackslash{}cite\{biblatex\}}; \LaTeX{} then prints the reference \cite{biblatex}, and the document is added to the list of references below.
+
+\emph{This is awesome.}
+Here's all the things you \emph{don't} have to do:
+\begin{itemize}
+\item
+  You don't have to remember how to format the in-line citation.
+
+\item
+  You don't have to think about how to format the bibliography entry.
+
+\item
+  You don't have to keep track of what sources you cite in your document.
+
+\item
+  You don't have to sort the bibliography.
+\end{itemize}
+
+To get access to all this power, you need to know just a bit about how Bib\LaTeX{} works.
+
+\section{The Bib\LaTeX{} database}
+\label{s:database}
+The core of the Bib\LaTeX{} system is the \emph{database}, which stores data about the documents you might want to cite.
+It's a simple text file (usually with the \code{.bib} extension) that lives in the directory with your documents.
+The database used by this document appears in \cref{lst:thedatabase}, so you can get a sense of what these look like.
+
+\lstinputlisting[float=pht, frame=single, caption=An example Bib\LaTeX{} database, label=lst:thedatabase, language=TeX]{sources.bib}
+
+Each entry in the database follows a standard format.
+\begin{itemize}
+\item The first line tells Bib\LaTeX{} the \emph{type} of the entry, using a code like \code{{@}Online} (indicating that the entry is of type \enquote{Online}).
+
+\item
+  The body of the entry appears between the curly braces \code{\{} and \code{\}}.
+
+\item
+  The first line of the body gives the entry a \emph{key}, which will be used to refer to the entry later.
+
+\item
+  Each line after that is of the form \enquote{\code{attribute = value,}}, and adds some piece of information to the entry.
+  For example, you can tell Bib\LaTeX{} that Donald Knuth is the author of a text with the line
+\begin{verbatim}
+author = {Knuth, Donald},
+\end{verbatim}
+  Each value should be enclosed in curly braces, as in \cref{lst:thedatabase}.
+\end{itemize}
+
+\subsection{Structure of a database entry}
+\label{s:structure}
+For example, consider the entry for \code{knuth:aocp} in \cref{lst:thedatabase}.
+Let's break it down line-by-line.
+
+\begin{itemize}
+\item
+  The first line tells Bib\LaTeX{} that this entry represents a book.
+\begin{verbatim}
+@Book{
+\end{verbatim}
+
+\item
+  The second line sets the citation key.
+\begin{verbatim}
+knuth:aocp,
+\end{verbatim}
+
+\item
+  The third line sets the title of the book.
+  Note that, as with all the other lines, the value is enclosed in curly braces.
+\begin{verbatim}
+title = {The Art of Computer Programming: Fundamental algorithms},
+\end{verbatim}
+
+\item
+  The fourth line sets the author of the book.
+  Bib\LaTeX{} is able to handle author fields very intelligently; it will take care of things like abbreviating and sorting names according to style.
+  Thus, we include the full name.
+  (Putting the last name first with a comma is good practice; it makes sure that Bib\LaTeX{} handles things correctly even when authors have multi-word last names.)
+\begin{verbatim}
+author = {Knuth, Donald Erwin},
+\end{verbatim}
+
+\item
+  The remaining lines set publication data for the book.
+\begin{verbatim}
+series = {The Art of Computer Programming},
+year = {1968},
+isbn = {0-201-03801-3},
+publisher = {Addison-Wesley},
+}
+\end{verbatim}
+\end{itemize}
+
+\subsection{Available entry types}
+\label{s:entrytypes}
+Bib\LaTeX{} supports a diverse array of entry types, supporting many different kinds of references.
+A complete list is available in the documentation \cite{biblatex}.
+A few of the most important ones for academic work are:
+\begin{description}
+\item[article]
+  Used for articles which appear in journals or other publications but which have their own author and title.
+
+\item[book]
+  Used for a single-volume book.
+
+\item[mvbook]
+  Variant of \code{book}, used for books with multiple volumes.
+
+\item[manual]
+  Used for technical manuals and documentation.
+
+\item[thesis]
+  Used for theses and dissertations.
+
+\item[unpublished]
+  Used for material which has not been formally published in any venue.
+  This is \emph{not} appropriate for preprints on a server like the arXiv.
+
+\item[online]
+  A catch-all for online materials.
+  \emph{Do not use this unless no other type is a better fit!}
+  For example, you should use \code{article} for a journal article which you downloaded from a website.
+  However, this \emph{should} be used for preprints on a server like the arXiv, as shown in entry \code{vcuts} in \cref{lst:thedatabase}, which appears as \cite{vcuts}.
+\end{description}
+
+Each of these types has several \emph{required} fields (typically including \code{author} and \code{title}, but there may be more) and many \emph{optional} fields.
+The Bib\LaTeX{} documentation is the definitive reference for this information.
+
+\section{Editing the Bib\LaTeX{} database}
+\label{s:editing}
+Each of the Carleton templates comes with a Bib\LaTeX{} database example file called \code{sources.bib}.
+To edit it in Write\LaTeX{}, just select \enquote{Project} in the upper left of the window, then click the edit icon next to this file.
+Once you're done, go through the same process to get back to your main source file.
+
+\section{Citations in your document}
+\label{s:citing}
+Once you've set up a Bib\LaTeX{} database entry, you need to cite it in your document.
+To do this, use the \code{\textbackslash{}cite\{\}} command.
+For example, to cite \textit{The Art of Computer Programming} using the entry from \cref{s:structure}, we just type \code{\textbackslash{}cite\{knuth:aocp\}}, which produces the following citation: \cite{knuth:aocp}.
+In addition, this tells Bib\LaTeX{} to add this text to the bibliography; take a look at the References section at the end of the document to see the result.
+
+If you prefer footnote citations, you can obtain them using the \code{\textbackslash{}footcite\{\}}, which has the same syntax as \code{\textbackslash{}cite\{\}}.
+In this style, citing \code{\textbackslash{}footcite\{\}} results in this: \footcite{biblatex}, which looks a bit silly, but many styles define footnote citations that make sense.
+
+A third option is the \code{\textbackslash{}autocite\{\}} command, which uses either \code{\textbackslash{}cite\{\}} or \code{\textbackslash{}footcite\{\}} depending on which is standard for the style.
+Again, this uses the same syntax as \code{\textbackslash{}cite\{\}}.
+
+\subsection{Citations with postnotes}
+\label{s:postnotes}
+Many academic citations include so-called \enquote{postnotes}, which give the reader additional information about where in a text they should look for a particular piece of information.
+For example, if you want to read more about this topic, you should consult \cite[\S 3.7]{biblatex}.
+
+To format such a citation, we only need to pass an optional argument to \code{\textbackslash{}cite\{\}} using square braces.
+The previous citation was obtained by typing the following:
+\begin{verbatim}
+\cite[\S 3.7]{biblatex}
+\end{verbatim}
+
+\section{Bibliographic styles}
+\label{s:styles}
+Bib\LaTeX{} supports many different bibliographic styles, which control both the inline citations and the bibliography entries at the end of the document.
+This document uses the \enquote{numeric} style, which produces inline citations like this one: \cite{biblatex}.
+You can choose the style used by your document by changing the \code{style=?} option in the line
+\begin{verbatim}
+\usepackage[backend=bibtex,style=numeric]{biblatex}
+\end{verbatim}
+in the preamble.
+
+A few of the major styles that Bib\LaTeX{} supports include:
+\begin{description}
+\item[mla]
+  Formats citations according to the MLA style guide\footnote{This is surprisingly tricky---the older Bib\TeX{} system simply can't handle it!}.
+  It would cite \cite{knuth:aocp} as \enquote{[Knu68]}.
+
+\item[alphabetic]
+  Uses alphabetic instead of numerical keys for inline citations.
+  It would cite \cite{knuth:aocp} as \enquote{[Knu68]}.
+
+\item[authoryear]
+  Uses a more verbose author-year inline citation.
+  It would cite \cite{knuth:aocp} as \enquote{(Knuth 1968)}.
+\end{description}
+
+\section{Obtaining Bib\LaTeX{} database entries}
+\label{s:obtaining}
+In practice, you won't need to do a lot of manual entry of Bib\LaTeX{} database entries.
+For one thing, they're reusable---once you format an entry for a text once, you can use it over and over again throughout your work.
+Just copy the entry from the old database and paste it into the new one.
+
+In addition, Bib\TeX{} stanzas are available through many common systems for finding sources.
+For example, if you look up a paper on \href{http://scholar.google.com}{Google Scholar} and click on the \enquote{Cite} link, the \enquote{Import into Bib\TeX{}} link will take you to a Bib\LaTeX{} database entry ready to copy-and-paste.
+(Unfortunately, Google doesn't always do a great job with these, especially when the papers are preprints on the arXiv.
+Still, it's a start!)
+A similar feature is available through the AMS's MathSciNet reviews database.
+
+\printbibliography
 \end{document}
